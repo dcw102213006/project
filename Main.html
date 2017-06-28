@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+
+<input type="text" value="test1" id="username" name="username" >
+</br>
+</br>
+<input type="text" value="test123" id="password" name="password">
+<input type="button" value="登入" id="login" >
+
+</br>
+</br>
+id:<input type="text" size="10" id="select_id">
+<input type="button" value="取得文章" id="getdata" >
+<div id="userdata"></div>
+
+</br>
+</br>
+標題:<input type="text"  id="title" >
+內容:<input type="text"  id="content" >
+分類:<input type="text"  id="tag"  >
+<input type="button" value="PO文" id="po" >
+</br>
+</br>
+id:<input type="text" size="10" id="delete_id">
+<input type="button" value="刪除文章" id="deletedata" >
+<div id="deletearea"></div>
+
+
+</body>
+<script>
+$(document).ready(function(){
+$("#login").click(function(){
+var username = $('#username').val();
+var password = $('#password').val();
+    $.ajax(
+        {
+            type: "POST",
+            url: "https://richegg.top/login",
+            dataType: 'json',
+			contentType: 'application/json',
+			xhrFields: {
+				withCredentials: true
+			},
+            data: JSON.stringify({
+				username,
+				password
+			}), 
+            success: function(result){
+                console.log(result);
+            } 
+        
+        }
+    );
+   
+});
+$("#getdata").click(function(){
+var id=$("#select_id").val();
+id=id.trim();
+if(id==""){
+    $("#userdata").html("<p style=color:red>輸入id</p>");
+    return;
+}
+    $.ajax(
+        {
+            type: "GET",
+            url: "https://richegg.top/posts/"+id,
+            dataType: 'json',
+			contentType: 'application/json',
+			xhrFields: {
+				withCredentials: true
+			},
+             
+            success: function(result){
+            
+              
+               $("#userdata p").remove();
+                for (var i in result) {
+
+                     
+                     $("#userdata").append("<p>"+i+":"+result[i]+"</p>");  
+
+                   
+
+                }
+                
+               
+            },
+            error:  function(result){
+            
+              
+              $("#userdata").html("<p style=color:red>"+result.responseText+"</p>");
+               
+            }      
+        
+        }
+    );
+   
+});
+
+
+$("#po").click(function(){
+var title = $('#title').val();
+var content = $('#content').val();
+var tag = $('#tag').val();
+
+    $.ajax(
+        {
+            type: "POST",
+            url: "https://richegg.top/posts",
+            dataType: 'json',
+			contentType: 'application/json',
+			xhrFields: {
+				withCredentials: true
+			},
+            data: JSON.stringify({
+				  
+                 "title": title,
+                 "content": content,
+                
+ 
+                 
+                 "tags": [tag]
+			}),
+            success: function(result){
+                console.log(result);
+                
+               
+            } ,
+            error: function(result){
+                
+                   alert(result.responseText);
+                
+                
+               
+            } 
+            
+            
+        }
+    );
+   
+});
+$("#deletedata").click(function(){
+var id=$("#delete_id").val();
+id=id.trim();
+if(id==""){
+    $("#deletearea").html("<p style=color:red>輸入id</p>");
+    return;
+}
+$("#deletearea").html("");
+    $.ajax(
+        {
+            type: "DELETE",
+            url: "https://richegg.top/posts/"+id,
+            dataType: 'json',
+			contentType: 'application/json',
+			xhrFields: {
+				withCredentials: true
+			},
+             
+            success: function(result){
+            
+              
+               console.log(result);
+                
+               
+            },
+            error:  function(result){
+            
+              
+                alert(result.responseText);
+               
+            }      
+        
+        }
+    );
+   
+});
+
+});
+
+
+
+</script>
+</html>
