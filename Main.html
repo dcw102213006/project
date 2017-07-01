@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<input type="text" value="test1" id="username" name="username" >
+<input type="text" value="Iem0n592o" id="username" name="username" >
 </br>
 </br>
 <input type="text" value="test123" id="password" name="password">
@@ -20,10 +20,31 @@ id:<input type="text" size="10" id="select_id">
 
 </br>
 </br>
+username:<input type="text" size="10" id="username_id">
+
+<input type="button" value="取得使用者資料" id="getuserdata" >
+<div id="usernamearea"></div>
+</br>
+</br>
 標題:<input type="text"  id="title" >
 內容:<input type="text"  id="content" >
 分類:<input type="text"  id="tag"  >
 <input type="button" value="PO文" id="po" >
+</br>
+</br>
+id:<input type="text" size="10" id="edit_id">
+標題:<input type="text"  id="edit_title" >
+內容:<input type="text"  id="edit_content" >
+分類:<input type="text"  id="edit_tag"  >
+<input type="button" value="修改文章" id="edit" >
+</br>
+</br>
+id:<input type="text" size="10" id="edit_userid">
+密碼:<input type="password"  id="edit_password" >
+姓名:<input type="text"  id="edit_name" >
+性別:<input type="text"  id="edit_sex"  >
+地址:<input type="text"  id="edit_address"  >
+<input type="button" value="修改使用者資料" id="edit_user" >
 </br>
 </br>
 id:<input type="text" size="10" id="delete_id">
@@ -35,6 +56,7 @@ id:<input type="text" size="10" id="delete_id">
 <script>
 $(document).ready(function(){
 $("#login").click(function(){
+ $("#usernamearea").html("");
 var username = $('#username').val();
 var password = $('#password').val();
     $.ajax(
@@ -51,7 +73,14 @@ var password = $('#password').val();
 				password
 			}), 
             success: function(result){
-                console.log(result);
+                for (var i in result) {
+
+                     
+                     $("#usernamearea").append("<p>"+i+":"+result[i]+"</p>");  
+
+                   
+
+                }
             } 
         
         }
@@ -102,7 +131,50 @@ if(id==""){
    
 });
 
+$("#getuserdata").click(function(){
+var id=$("#username_id").val();
+id=id.trim();
+$("#usernamearea").html("");
+if(id==""){
+    $("#usernamearea").html("<p style=color:red>輸入username</p>");
+    return;
+}
+    $.ajax(
+        {
+            type: "GET",
+            url: "https://richegg.top/authors/"+id,
+            dataType: 'json',
+			contentType: 'application/json',
+			xhrFields: {
+				withCredentials: true
+			},
+             
+            success: function(result){
+            
+              
+              
+                for (var i in result) {
 
+                     
+                     $("#usernamearea").append("<p>"+i+":"+result[i]+"</p>");  
+
+                   
+
+                }
+                
+               
+            },
+            error:  function(result){
+            
+              
+              $("#usernamearea").html("<p style=color:red>"+result.responseText+"</p>");
+               
+            }      
+        
+        }
+    );
+   
+});
 $("#po").click(function(){
 var title = $('#title').val();
 var content = $('#content').val();
@@ -134,6 +206,92 @@ var tag = $('#tag').val();
             error: function(result){
                 
                    alert(result.responseText);
+                
+                
+               
+            } 
+            
+            
+        }
+    );
+   
+});
+$("#edit").click(function(){
+var id=$('#edit_id').val();
+var title = $('#edit_title').val();
+var content = $('#edit_content').val();
+var tag = $('#edit_tag').val();
+
+    $.ajax(
+        {
+            type: "PATCH",
+            url: "https://richegg.top/posts/"+id,
+            dataType: 'json',
+			contentType: 'application/json',
+			xhrFields: {
+				withCredentials: true
+			},
+            data: JSON.stringify({
+				  
+                 "title": title,
+                 "content": content,
+                
+ 
+                 
+                 "tags": [tag]
+			}),
+            success: function(result){
+                console.log(result);
+                
+               
+            } ,
+            error: function(result){
+                
+                   alert(result.responseText);
+                
+                
+               
+            } 
+            
+            
+        }
+    );
+   
+});
+$("#edit_user").click(function(){
+var id=$('#edit_userid').val();
+var password=$('#edit_password').val();
+var name = $('#edit_name').val();
+var sex = $('#edit_sex').val();
+var address = $('#edit_address').val();
+
+    $.ajax(
+        {
+            type: "PATCH",
+            url: "https://richegg.top/authors/"+id,
+            dataType: 'json',
+			contentType: 'application/json',
+			xhrFields: {
+				withCredentials: true
+			},
+            data: JSON.stringify({
+				  
+                 "password": password,
+                 "name": name,
+                
+ 
+                 
+                 "gender": sex,
+                 "address":address
+			}),
+            success: function(result){
+                console.log(result);
+                
+               
+            } ,
+            error: function(result){
+                
+                   alert(result.responseText+"或未登入");
                 
                 
                
